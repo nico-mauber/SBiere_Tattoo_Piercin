@@ -414,22 +414,21 @@ function Contact(){
     setLoading(true);
 
     const fd = new FormData();
-    fd.append("form-name", "contacto");
     fd.append("name", form.name);
     fd.append("email", form.email);
     fd.append("phone", form.phone);
     fd.append("placement", form.placement);
     fd.append("date", form.date);
     fd.append("size", form.size);
-    fd.append("note", form.note);
+    fd.append("message", form.note);
 
-    fetch("/", {
+    fetch("https://formspree.io/f/xqewydgl", {
       method: "POST",
-      body: new URLSearchParams(fd).toString(),
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: fd,
+      headers: { "Accept": "application/json" },
     })
-      .then((r) => { console.log("Netlify form:", r.status); setLoading(false); setSent(true); })
-      .catch((err) => { console.error("Netlify form error:", err); setLoading(false); setSent(true); });
+      .then((r) => { setLoading(false); if (r.ok) setSent(true); else setSent(true); })
+      .catch(() => { setLoading(false); setSent(true); });
   };
 
   return (
@@ -478,8 +477,7 @@ function Contact(){
                 </div>
               </form>
             ) : (
-            <form className="bookform" onSubmit={submit} noValidate name="contacto" data-netlify="true">
-              <input type="hidden" name="form-name" value="contacto" />
+            <form className="bookform" onSubmit={submit} noValidate>
               <div className="formhead">
                 <span className="t">Solicitud de cita</span>
                 <span className="ix">SB · 26-04</span>
